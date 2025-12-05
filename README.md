@@ -19,7 +19,10 @@ This repository contains the implementation of **Pulse2BeatGAN**, a deep learnin
 *   **Losses**:
     *   Pixel-wise L1 Loss
     *   GAN Loss (WGAN-GP)
-    *   Spectral Losses: Bandwidth (IPR), Sparsity (SNR), Variance (EMD)
+    *   Spectral Losses: 
+        *   Bandwidth (IPR)
+        *   **Dynamic Sparsity (SNR)**: Adapts to the signal's dominant frequency.
+        *   Variance (EMD)
     *   Guided Attention Loss
 
 ## Installation
