@@ -191,7 +191,7 @@ def load_and_process_csv_file(file_path, target_sr=128, segment_length=512, ecg_
         print(f"Error processing CSV {file_path}: {e}")
         return np.array([]), np.array([])
 
-def create_peak_mask(signal_data, sampling_rate=128):
+def create_peak_mask(signal_data, sampling_rate=128, return_indices=False):
     # Detect peaks
     # R-peaks for ECG
     try:
@@ -208,6 +208,10 @@ def create_peak_mask(signal_data, sampling_rate=128):
             end = min(len(signal_data), int(peak + window))
             mask[start:end] = 1.0
             
+        if return_indices:
+            return mask, rpeaks_indices
         return mask
     except:
+        if return_indices:
+            return np.zeros_like(signal_data), np.array([])
         return np.zeros_like(signal_data)

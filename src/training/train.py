@@ -155,7 +155,7 @@ def train(args):
     # Loss functions
     criterion_GAN = torch.nn.MSELoss()
     criterion_pixel = torch.nn.L1Loss()
-    criterion_peaks = QRSLoss() # Or QRSEnhancedLoss
+    criterion_peaks = QRSEnhancedLoss(beta=5, sigma=1)
 
     # Data Loader
     logging.info(f"Initializing training dataset: {args.dataset} from {args.dataset_prefix}")
@@ -220,11 +220,17 @@ def train(args):
             if args.model == "swin_unet_gab":
                 # Generate masks on the fly
                 rpeaks_masks = []
+                rpeaks_indices_list = []
                 for sig in real_ecg.cpu().numpy():
-                    mask = create_peak_mask(sig.flatten(), sampling_rate=128)
+                    mask, indices = create_peak_mask(sig.flatten(), sampling_rate=128, return_indices=True)
                     rpeaks_masks.append(mask)
-                rpeaks_masks = torch.tensor(np.array(rpeaks_masks)).float().unsqueeze(1).to(device)
+                    # Pad indices to fixed length for batching (max peaks ~20 for 4s segment?)
+                    # Or keep as list of arrays if Loss handles it. 
+                    # QRSEnhancedLoss iterates batch, so list of arrays is fine if we handle it there.
+                    # But we need to pass it to Loss.
+                    rpeaks_indices_list.append(indices)
                 
+                rpeaks_masks = torch.tensor(np.array(rpeaks_masks)).float().unsqueeze(1).to(device)
                 opeaks_masks = torch.zeros_like(rpeaks_masks).to(device)
                 
                 fake_ecg_128, fake_ecg_256, fake_ecg, _ = ecg_generator(real_ppg, rpeaks_masks, opeaks_masks)
@@ -332,6 +338,14 @@ def train(args):
                     # l1_losses is a list of losses
                     gab_loss = sum(l1_losses)
                     loss_G += 0.5 * gab_loss # Default lambda from legacy code
+                    
+                    # Add QRS Enhanced Loss
+                    # rpeaks_indices_list is a list of arrays. QRSEnhancedLoss expects this format or similar.
+                    # We need to ensure it handles it. Let's check losses.py again.
+                    # It iterates: r_peak = r_peaks[i]
+                    # So passing the list is fine if it supports indexing.
+                    loss_qrs = criterion_peaks(fake_ecg, real_ecg, rpeaks_indices_list)
+                    loss_G += 1.0 * loss_qrs # Weight for QRS loss (adjust as needed)
 
                 loss_G.backward()
                 optimizer_G.step()
