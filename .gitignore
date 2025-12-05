@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.ipynb_checkpoints/
+logs/
+saved_models/
+sample_signals/
+Dataset/
+legacy/
+output.txt
+.DS_Store
+*.log
