@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18740347.svg)](https://doi.org/10.5281/zenodo.18740347)
+
 # Pulse2BeatGAN
 
 This repository contains the implementation of **Pulse2BeatGAN**, a deep learning framework for estimating ECG signals from PPG signals. It supports multiple model architectures and datasets, enabling robust ablation studies and cross-dataset evaluations.
@@ -71,4 +73,27 @@ python main.py --dataset bidmc --test_dataset wesad ...
 *   `src/training/`: Training loop (`train.py`).
 *   `src/utils/`: Utility functions, losses, and metrics (`losses.py`, `metrics.py`).
 *   `main.py`: Entry point.
+
+## 📖 Citation
+
+If you use **Pulse2BeatGAN** in your research, please cite:
+
+**IEEE Style:**
+
+[1] M. I. Hossain (Rimon), “imranrimon/Pulse2BeatGAN: Pulse2BeatGAN,” Zenodo, Feb. 23, 2026. doi: 10.5281/zenodo.18740347.
+
+**DOI:** https://doi.org/10.5281/zenodo.18740347
+
+
+**BibTeX:**
+
+```bibtex
+@software{hossain_pulse2beatgan_2026,
+  author       = {Hossain, Muhammad Imran},
+  title        = {Pulse2BeatGAN},
+  year         = {2026},
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.18740347},
+  url          = {https://doi.org/10.5281/zenodo.18740347}
+}
 
